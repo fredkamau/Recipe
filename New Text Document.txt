@@ -1,0 +1,276 @@
+
+1. How to Win Friends and Influence People - Dale Carnagy
+2. You Can Negotiate Anything - Herb Cohrn
+3. The Millionaire Next Door - Thomas J. Stanly
+4. Predictably Irrational - Dan Ariely 
+5. Tough Time Never Lasts but Tough People Do - Robert Schuller 
+6. Think and Grow Rich - Napoleon Hill 
+7.  7 Habits of Highly Effective People - Stephen Covey
+8.  Why You Act the Way You Do - Tim Lahaye
+9.  Rich Dad Poor Dad - Robert Kiyosaki
+10.  The Richest Man in Babylon - George S Clason
+
+-if you cant create excellence with what you have now,you will probably not get it where you are going
+
+using Innova.Insurance.Interfaces;
+using Innova.Insurance.Interfaces.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Innova.Insurance.Data.Repositories
+{
+    public class BankBranchesDataService : IBankBranchesDataService
+    {
+        readonly InsuranceEntities context;
+        public BankBranchesDataService(InsuranceEntities ctx)
+        {
+            context = ctx;
+        }
+
+        public BankBranches Select(Guid ID)
+        {
+            var bankbranch = context.BankBranches.AsQueryable().SingleOrDefault(x => x.BankBranchID == ID);
+            return bankbranch;
+        }
+        public List<BankBranches> GetAll()
+        {
+            var queryable = context.BankBranches.AsNoTracking().ToList();
+            return queryable.OrderBy(x => x.Name).ToList();
+        }
+
+
+        public List<BankBranches> SelectByBank(Guid BankID)
+        {
+            var results = context.BankBranches.Where(c => c.BankID == BankID).ToList();
+
+            return results;
+        }
+
+        public Guid Create(BankBranches CreateModel)
+        {
+            var item = context.BankBranches.FirstOrDefault(c => c.BankBranchID == CreateModel.BankBranchID);
+            if (item == null)
+            {
+                if (CreateModel.BankBranchID == Guid.Empty)
+                    CreateModel.BankBranchID = Guid.NewGuid();
+
+                item = CreateModel;
+
+                context.BankBranches.Add(item);
+            }
+            else
+                throw new InvalidOperationException("A bank branch with the provided ID already exists");
+
+            context.SaveChanges();
+
+            return item.BankBranchID;
+        }
+
+        public Guid Update(BankBranches UpdateModel)
+        {
+            var item = context.BankBranches.FirstOrDefault(c => c.BankBranchID == UpdateModel.BankBranchID);
+            if (item == null)
+            {
+                throw new InvalidOperationException("Could not find a bank branch matching ");
+            }
+            else
+            {
+                item.Active = UpdateModel.Active;
+                item.AlternatePhone = UpdateModel.AlternatePhone;
+                item.Code = UpdateModel.Code;
+                item.CountryID = UpdateModel.CountryID;
+                item.DateModified = DateTime.Now;
+                item.EditUserID = UpdateModel.EditUserID;
+                item.Email = UpdateModel.Email;
+                item.Fax = UpdateModel.Fax;
+                item.IPAddress = UpdateModel.IPAddress;
+                item.LogonAccount = UpdateModel.LogonAccount;
+                item.MainPhone = UpdateModel.MainPhone;                
+                item.Name = UpdateModel.Name;
+                item.Notes = UpdateModel.Notes;
+                item.PhysicalAddress = UpdateModel.PhysicalAddress;
+                item.PostalAddress = UpdateModel.PostalAddress;
+                item.SwiftCode = UpdateModel.SwiftCode;
+                item.Website = UpdateModel.Website;
+            }
+
+            context.SaveChanges();
+            return item.BankBranchID;
+        }
+
+
+
+        public void Delete(Guid ID)
+        {
+            BankBranches bankBranches = context.BankBranches.FirstOrDefault(c => c.BankBranchID == ID);
+            context.BankBranches.Remove(bankBranches);
+            context.SaveChanges();
+        }
+    }
+}
+
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Innova Limited</a>
+  <input class="form-control w-70" type="text" placeholder="Search" aria-label="Search">
+  <i id="filtersubmit" class="fa fa-search"></i>
+  <ul class="navbar-nav px-3">
+    <li class="nav-item text-nowrap">
+      <a class="nav-link" href="#"><i class="fa fa-user" (click)="logout()"></i> Sign out</a>
+    </li>
+  </ul>
+</nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <i class="fa fa-home"></i>
+                Dashboard <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-file"></i>
+                Orders
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-shopping-cart"></i>
+                Products
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-user"></i>
+                Customers
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-bars"></i>
+                Reports
+              </a>
+            </li>
+          </ul>
+
+          <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+            <span>Saved reports</span>
+            <a class="d-flex align-items-center text-muted" href="#">
+              <i class="fa fa-plus-circle"></i>
+            </a>
+          </h6>
+          <ul class="nav flex-column mb-2">
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-file"></i>
+                Current month
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-file"></i>
+                Last quarter
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="fa fa-file"></i>
+                Year-end sale
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 mt-3">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom">
+          <button type="button" class="btn btn-sm btn-outline-secondary">
+            <i class="fa fa-plus-circle"></i>
+            Add
+          </button>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+              <span data-feather="calendar"></span>
+              This week
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped table-sm table-hover">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Header</th>
+                <th>Header</th>
+                <th>Header</th>
+                <th>Header</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1,001</td>
+                <td>Lorem</td>
+                <td>ipsum</td>
+                <td>dolor</td>
+                <td>sit</td>
+                <td>
+                  <button class="btn btn-sm btn-success mr-1"><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-sm btn-warning mr-1"><i class="fa fa-edit"></i></button>
+                  <button class="btn btn-sm btn-danger mr-1"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>1,001</td>
+                <td>Lorem</td>
+                <td>ipsum</td>
+                <td>dolor</td>
+                <td>sit</td>
+                <td>
+                  <button class="btn btn-sm btn-success mr-1"><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-sm btn-warning mr-1"><i class="fa fa-edit"></i></button>
+                  <button class="btn btn-sm btn-danger mr-1"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td>1,001</td>
+                <td>Lorem</td>
+                <td>ipsum</td>
+                <td>dolor</td>
+                <td>sit</td>
+                <td>
+                  <button class="btn btn-sm btn-success mr-1"><i class="fa fa-eye"></i></button>
+                  <button class="btn btn-sm btn-warning mr-1"><i class="fa fa-edit"></i></button>
+                  <button class="btn btn-sm btn-danger mr-1"><i class="fa fa-trash"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+  <footer class="footer mt-auto py-3">
+    <div class="container text-center">
+      <span class="text-muted">Copyright © 2019 Innova Limited.</span>
+    </div>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script>window.jQuery || document.write('<script src="/docs/4.3/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+  <script src="/docs/4.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+  <script src="dashboard.js"></script>
+
